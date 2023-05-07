@@ -19,7 +19,7 @@ chacha20_cipher = Cipher(algorithms.ChaCha20(key_bytes, nonce_bytes),
 chacha20_encryptor = chacha20_cipher.encryptor()
 chacha20_decryptor = chacha20_cipher.decryptor()
 
-input_value = f"{dispayName}{home_address}{disabilty}"
+input_value = f"{dispayName}{home_address}{disabilty}{D_O_B}{email}"
 
 plaintext_bytes = bytes(input_value, "utf-8")
 
