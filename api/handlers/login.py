@@ -1,8 +1,10 @@
+import os
 from datetime import datetime, timedelta
 from time import mktime
 from tornado.escape import json_decode, utf8
 from tornado.gen import coroutine
 from uuid import uuid4
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
 from .base import BaseHandler
 
@@ -49,11 +51,7 @@ class LoginHandler(BaseHandler):
             self.send_error(400, message='The password is invalid!')
             return
 
-        user = yield self.db.users.find_one({
-          'email': email
-        }, {
-          'password': 1
-        })
+        user = yield self.db.users.find_one({'email': email}, {'password': 1, 'salt': 1})
 
         if user is None:
             self.send_error(403, message='The email address and password are invalid!')
@@ -62,6 +60,13 @@ class LoginHandler(BaseHandler):
         if user['password'] != password:
             self.send_error(403, message='The email address and password are invalid!')
             return
+
+        # Updated code to hash the password(taken from practical)
+        salt = os.urandom(16)
+        kdf = Scrypt(salt=salt, length=32, n=2 ** 14, r=8, p=1)
+        passphrase = password
+        passphrase_bytes = bytes(password, "utf-8")
+        hashed_passphrase = kdf.derive(password_bytes)
 
         token = yield self.generate_token(email)
 
