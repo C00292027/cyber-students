@@ -80,8 +80,8 @@ class RegistrationHandler(BaseHandler):
             self.send_error(400, message='Disability description is invalid!')
             return
 
-        if not date_of_birth:
-            self.send_error(400, message='Date of birth is invalid!')
+        if not D_O_B:
+            self.send_error(400, message='DOB is invalid!')
             return
 
         if not home_address:
