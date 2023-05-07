@@ -10,6 +10,7 @@ from .base import BaseHandler
 
 # Define the key
 key = "thesecondbestsecretkeyintheentireworld"
+key_bytes = bytes(key, "utf-8")
 
 nonce_bytes = os.urandom(16)
 
@@ -19,11 +20,17 @@ chacha20_cipher = Cipher(algorithms.ChaCha20(key_bytes, nonce_bytes),
 chacha20_encryptor = chacha20_cipher.encryptor()
 chacha20_decryptor = chacha20_cipher.decryptor()
 
-input_value = f"{dispayName}{home_address}{disabilty}{DOB}{email}"
+display_name = 'shane sweeney'
+home_address = 'Waterford'
+disability = 'poor coding skills'
+DOB = '1978-10-03'
+email = 'coo292072@itcarlow.ie'
+
+input_value = f"{display_name}{home_address}{disability}{DOB}{email}"
 
 plaintext_bytes = bytes(input_value, "utf-8")
 
-ciphertext_bytes = encryptor.update(plaintext_bytes)
+ciphertext_bytes = chacha20_encryptor.update(plaintext_bytes)
 ciphertext = ciphertext_bytes.hex()
 print("Ciphertext: " + ciphertext)
 
@@ -53,11 +60,11 @@ class RegistrationHandler(BaseHandler):
             disability = body.get('disability')
             if not isinstance(disability, str):
                 raise Exception()
-            home_address: object = body.get('home_address')
+            home_address = body.get('home_address')
             if not isinstance(home_address, str):
                 raise Exception()
             DOB = body.get('D_O_B')
-            if not isinstance(D_O_B, str):
+            if not isinstance(DOB, str):
                 raise Exception()
 
         except Exception as e:
@@ -80,7 +87,7 @@ class RegistrationHandler(BaseHandler):
             self.send_error(400, message='Disability description is invalid!')
             return
 
-        if not D_O_B:
+        if not DOB:
             self.send_error(400, message='DOB is invalid!')
             return
 
@@ -116,7 +123,7 @@ class RegistrationHandler(BaseHandler):
         self.set_status(200)
         self.response['email'] = email
         self.response["displayName"] = display_name
-        self.response['DOB'] = D_O_B
+        self.response['DOB'] = DOB
         self.response['home_address'] = home_address
         self.response['disability'] = disability
 
